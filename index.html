@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lissu the Russian Blue</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Georgia', serif;
+      background: #e8f0f7;
+      color: #2d3a4a;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: linear-gradient(135deg, #5b7fa6, #8aadd4);
+      color: white;
+      text-align: center;
+      padding: 2.5rem 1rem 2rem;
+    }
+
+    header h1 {
+      font-size: 3rem;
+      letter-spacing: 2px;
+      text-shadow: 1px 2px 6px rgba(0,0,0,0.2);
+    }
+
+    header p {
+      font-size: 1.1rem;
+      margin-top: 0.4rem;
+      opacity: 0.9;
+      font-style: italic;
+    }
+
+    /* ── Cat illustration ── */
+    .cat-wrapper {
+      display: flex;
+      justify-content: center;
+      margin: 2.5rem 0 1.5rem;
+    }
+
+    .cat {
+      position: relative;
+      width: 160px;
+      height: 160px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    /* Body */
+    .cat-body {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 110px;
+      height: 90px;
+      background: #8fa8c8;
+      border-radius: 55px 55px 45px 45px;
+    }
+
+    /* Head */
+    .cat-head {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90px;
+      height: 82px;
+      background: #8fa8c8;
+      border-radius: 50% 50% 45% 45%;
+    }
+
+    /* Ears */
+    .cat-ear {
+      position: absolute;
+      top: -22px;
+      width: 0;
+      height: 0;
+      border-left: 18px solid transparent;
+      border-right: 18px solid transparent;
+      border-bottom: 32px solid #8fa8c8;
+    }
+    .cat-ear.left  { left: 6px; transform: rotate(-10deg); }
+    .cat-ear.right { right: 6px; transform: rotate(10deg); }
+
+    /* Inner ear */
+    .cat-ear::after {
+      content: '';
+      position: absolute;
+      top: 8px;
+      left: -10px;
+      width: 0;
+      height: 0;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-bottom: 18px solid #c8d8e8;
+    }
+
+    /* Eyes */
+    .cat-eyes {
+      position: absolute;
+      top: 28px;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-around;
+      padding: 0 14px;
+    }
+
+    .eye {
+      width: 16px;
+      height: 16px;
+      background: #4ec9a0;
+      border-radius: 50%;
+      border: 2px solid #2d3a4a;
+      position: relative;
+      transition: transform 0.15s;
+    }
+
+    .eye::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 4px;
+      width: 6px;
+      height: 6px;
+      background: #111;
+      border-radius: 50%;
+    }
+
+    .cat:hover .eye { transform: scaleY(0.4); }
+
+    /* Nose */
+    .cat-nose {
+      position: absolute;
+      top: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 6px solid #e88fa0;
+    }
+
+    /* Mouth */
+    .cat-mouth {
+      position: absolute;
+      top: 56px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 30px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .cat-mouth span {
+      display: block;
+      width: 12px;
+      height: 6px;
+      border: 2px solid #2d3a4a;
+      border-top: none;
+      border-radius: 0 0 8px 8px;
+    }
+
+    /* Whiskers */
+    .whiskers {
+      position: absolute;
+      top: 48px;
+      left: 0;
+      width: 100%;
+    }
+
+    .whisker {
+      position: absolute;
+      height: 2px;
+      background: #2d3a4a;
+      border-radius: 1px;
+      opacity: 0.6;
+    }
+
+    .whisker.l1 { width: 28px; top: 0;  left: 2px;  transform: rotate(-5deg); }
+    .whisker.l2 { width: 28px; top: 8px; left: 0;   transform: rotate(5deg);  }
+    .whisker.r1 { width: 28px; top: 0;  right: 2px; transform: rotate(5deg);  }
+    .whisker.r2 { width: 28px; top: 8px; right: 0;  transform: rotate(-5deg); }
+
+    /* Tail */
+    .cat-tail {
+      position: absolute;
+      bottom: 10px;
+      right: -28px;
+      width: 50px;
+      height: 18px;
+      border: 5px solid #8fa8c8;
+      border-top: none;
+      border-left: none;
+      border-radius: 0 0 24px 0;
+    }
+
+    /* Paws */
+    .cat-paws {
+      position: absolute;
+      bottom: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 16px;
+    }
+
+    .paw {
+      width: 26px;
+      height: 14px;
+      background: #8fa8c8;
+      border-radius: 50%;
+    }
+
+    /* ── Purr button ── */
+    .purr-btn {
+      display: block;
+      margin: 0 auto 0.5rem;
+      padding: 0.6rem 1.8rem;
+      background: #5b7fa6;
+      color: white;
+      border: none;
+      border-radius: 24px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      font-family: inherit;
+    }
+    .purr-btn:hover  { background: #4a6a8f; }
+    .purr-btn:active { transform: scale(0.96); }
+
+    .purr-msg {
+      text-align: center;
+      font-size: 1.4rem;
+      min-height: 2rem;
+      letter-spacing: 2px;
+      color: #5b7fa6;
+    }
+
+    /* ── Info cards ── */
+    .cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.2rem;
+      justify-content: center;
+      padding: 2rem 1.5rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 1.4rem 1.6rem;
+      width: 250px;
+      box-shadow: 0 4px 14px rgba(91,127,166,0.15);
+      text-align: center;
+    }
+
+    .card .icon { font-size: 2rem; margin-bottom: 0.5rem; }
+    .card h2    { font-size: 1.1rem; color: #5b7fa6; margin-bottom: 0.4rem; }
+    .card p     { font-size: 0.95rem; line-height: 1.5; color: #4a5a6a; }
+
+    /* ── Fun facts ── */
+    .facts-section {
+      background: white;
+      max-width: 620px;
+      margin: 0 auto 3rem;
+      border-radius: 16px;
+      padding: 1.8rem 2rem;
+      box-shadow: 0 4px 14px rgba(91,127,166,0.12);
+    }
+
+    .facts-section h2 {
+      text-align: center;
+      color: #5b7fa6;
+      margin-bottom: 1rem;
+      font-size: 1.3rem;
+    }
+
+    .facts-section ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .facts-section li {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #e8f0f7;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    .facts-section li:last-child { border-bottom: none; }
+    .facts-section li::before   { content: '🐾 '; }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.85rem;
+      color: #7a90a6;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Lissu</h1>
+    <p>The most majestic Russian Blue in the whole wide world</p>
+  </header>
+
+  <!-- CSS cat illustration -->
+  <div class="cat-wrapper">
+    <div class="cat" id="cat" title="Click me!">
+      <div class="cat-body">
+        <div class="cat-tail"></div>
+        <div class="cat-paws">
+          <div class="paw"></div>
+          <div class="paw"></div>
+        </div>
+      </div>
+      <div class="cat-head">
+        <div class="cat-ear left"></div>
+        <div class="cat-ear right"></div>
+        <div class="cat-eyes">
+          <div class="eye"></div>
+          <div class="eye"></div>
+        </div>
+        <div class="cat-nose"></div>
+        <div class="cat-mouth">
+          <span></span><span></span>
+        </div>
+        <div class="whiskers">
+          <div class="whisker l1"></div>
+          <div class="whisker l2"></div>
+          <div class="whisker r1"></div>
+          <div class="whisker r2"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="purr-btn" onclick="purr()">Pet Lissu</button>
+  <p class="purr-msg" id="purrMsg"></p>
+
+  <!-- Info cards -->
+  <div class="cards">
+    <div class="card">
+      <div class="icon">🐱</div>
+      <h2>Breed</h2>
+      <p>Russian Blue — known for their stunning silver-blue coat and emerald green eyes.</p>
+    </div>
+    <div class="card">
+      <div class="icon">💚</div>
+      <h2>Personality</h2>
+      <p>Gentle, intelligent, and a little shy at first — but endlessly loyal to her family.</p>
+    </div>
+    <div class="card">
+      <div class="icon">✨</div>
+      <h2>Special Talent</h2>
+      <p>Expert napper, champion biscuit-maker, and professional window watcher.</p>
+    </div>
+  </div>
+
+  <!-- Fun facts -->
+  <div class="facts-section">
+    <h2>Fun Facts About Russian Blues</h2>
+    <ul>
+      <li>Their coat has a unique double layer that shimmers in the light.</li>
+      <li>Russian Blues are known to be hypoallergenic — great for sensitive noses!</li>
+      <li>They are very quiet cats with soft, gentle voices.</li>
+      <li>They remember routines and will remind you when it's dinner time.</li>
+      <li>Russian Blues can live up to 15–20 years with love and care.</li>
+      <li>They tend to pick one special person as their very best friend.</li>
+    </ul>
+  </div>
+
+  <footer>
+    Made with love for Lissu &hearts;
+  </footer>
+
+  <script>
+    const responses = [
+      'Purrrrrr... 😻',
+      'Mrrrow~ 🐾',
+      'Purr purr purr ❤️',
+      '*slow blink* 💚',
+      'Prrr prrr prrr...',
+      'Miau! 🌟',
+      '*head bumps you* 💙',
+    ];
+
+    let last = -1;
+
+    function purr() {
+      let idx;
+      do { idx = Math.floor(Math.random() * responses.length); } while (idx === last);
+      last = idx;
+      const msg = document.getElementById('purrMsg');
+      msg.textContent = responses[idx];
+      // tiny wiggle on the cat
+      const cat = document.getElementById('cat');
+      cat.style.transform = 'scale(1.12)';
+      setTimeout(() => cat.style.transform = '', 220);
+    }
+  </script>
+</body>
+</html>
