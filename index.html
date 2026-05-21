@@ -3,415 +3,1194 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lissu the Russian Blue</title>
+  <title>Profitability Assistant</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+    :root {
+      --navy: #1a3a5c;
+      --blue: #2e6da4;
+      --blue-light: #e8f0f9;
+      --green: #1e8c4e;
+      --green-light: #e6f5ec;
+      --amber: #b45309;
+      --amber-light: #fef3c7;
+      --red: #c0392b;
+      --red-light: #fdf0ef;
+      --gray-1: #f5f7fa;
+      --gray-2: #e9ecf0;
+      --gray-3: #c8d0dc;
+      --gray-4: #7a8899;
+      --gray-5: #3d4a5a;
+      --white: #ffffff;
+      --shadow: 0 2px 12px rgba(26,58,92,0.10);
+      --radius: 10px;
     }
 
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      font-family: 'Georgia', serif;
-      background: #e8f0f7;
-      color: #2d3a4a;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--gray-1);
+      color: var(--gray-5);
       min-height: 100vh;
     }
 
     /* ── Header ── */
     header {
-      background: linear-gradient(135deg, #5b7fa6, #8aadd4);
+      background: var(--navy);
       color: white;
-      text-align: center;
-      padding: 2.5rem 1rem 2rem;
+      padding: 0 2rem;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.18);
     }
+
+    .header-left { display: flex; align-items: center; gap: 1rem; }
 
     header h1 {
-      font-size: 3rem;
-      letter-spacing: 2px;
-      text-shadow: 1px 2px 6px rgba(0,0,0,0.2);
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
     }
 
-    header p {
-      font-size: 1.1rem;
-      margin-top: 0.4rem;
+    #projectNameBadge {
+      background: rgba(255,255,255,0.15);
+      border-radius: 20px;
+      padding: 3px 12px;
+      font-size: 0.85rem;
       opacity: 0.9;
-      font-style: italic;
+      max-width: 260px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
-    /* ── Cat illustration ── */
-    .cat-wrapper {
-      display: flex;
-      justify-content: center;
-      margin: 2.5rem 0 1.5rem;
-    }
+    .header-right { display: flex; align-items: center; gap: 0.75rem; }
 
-    .cat {
-      position: relative;
-      width: 160px;
-      height: 160px;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    /* Body */
-    .cat-body {
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 110px;
-      height: 90px;
-      background: #8fa8c8;
-      border-radius: 55px 55px 45px 45px;
-    }
-
-    /* Head */
-    .cat-head {
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 90px;
-      height: 82px;
-      background: #8fa8c8;
-      border-radius: 50% 50% 45% 45%;
-    }
-
-    /* Ears */
-    .cat-ear {
-      position: absolute;
-      top: -22px;
-      width: 0;
-      height: 0;
-      border-left: 18px solid transparent;
-      border-right: 18px solid transparent;
-      border-bottom: 32px solid #8fa8c8;
-    }
-    .cat-ear.left  { left: 6px; transform: rotate(-10deg); }
-    .cat-ear.right { right: 6px; transform: rotate(10deg); }
-
-    /* Inner ear */
-    .cat-ear::after {
-      content: '';
-      position: absolute;
-      top: 8px;
-      left: -10px;
-      width: 0;
-      height: 0;
-      border-left: 10px solid transparent;
-      border-right: 10px solid transparent;
-      border-bottom: 18px solid #c8d8e8;
-    }
-
-    /* Eyes */
-    .cat-eyes {
-      position: absolute;
-      top: 28px;
-      left: 0;
-      width: 100%;
-      display: flex;
-      justify-content: space-around;
-      padding: 0 14px;
-    }
-
-    .eye {
-      width: 16px;
-      height: 16px;
-      background: #4ec9a0;
-      border-radius: 50%;
-      border: 2px solid #2d3a4a;
-      position: relative;
-      transition: transform 0.15s;
-    }
-
-    .eye::after {
-      content: '';
-      position: absolute;
-      top: 3px;
-      left: 4px;
-      width: 6px;
-      height: 6px;
-      background: #111;
-      border-radius: 50%;
-    }
-
-    .cat:hover .eye { transform: scaleY(0.4); }
-
-    /* Nose */
-    .cat-nose {
-      position: absolute;
-      top: 50px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 0;
-      height: 0;
-      border-left: 6px solid transparent;
-      border-right: 6px solid transparent;
-      border-top: 6px solid #e88fa0;
-    }
-
-    /* Mouth */
-    .cat-mouth {
-      position: absolute;
-      top: 56px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 30px;
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .cat-mouth span {
-      display: block;
-      width: 12px;
-      height: 6px;
-      border: 2px solid #2d3a4a;
-      border-top: none;
-      border-radius: 0 0 8px 8px;
-    }
-
-    /* Whiskers */
-    .whiskers {
-      position: absolute;
-      top: 48px;
-      left: 0;
-      width: 100%;
-    }
-
-    .whisker {
-      position: absolute;
-      height: 2px;
-      background: #2d3a4a;
-      border-radius: 1px;
-      opacity: 0.6;
-    }
-
-    .whisker.l1 { width: 28px; top: 0;  left: 2px;  transform: rotate(-5deg); }
-    .whisker.l2 { width: 28px; top: 8px; left: 0;   transform: rotate(5deg);  }
-    .whisker.r1 { width: 28px; top: 0;  right: 2px; transform: rotate(5deg);  }
-    .whisker.r2 { width: 28px; top: 8px; right: 0;  transform: rotate(-5deg); }
-
-    /* Tail */
-    .cat-tail {
-      position: absolute;
-      bottom: 10px;
-      right: -28px;
-      width: 50px;
-      height: 18px;
-      border: 5px solid #8fa8c8;
-      border-top: none;
-      border-left: none;
-      border-radius: 0 0 24px 0;
-    }
-
-    /* Paws */
-    .cat-paws {
-      position: absolute;
-      bottom: -12px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 16px;
-    }
-
-    .paw {
-      width: 26px;
-      height: 14px;
-      background: #8fa8c8;
-      border-radius: 50%;
-    }
-
-    /* ── Purr button ── */
-    .purr-btn {
-      display: block;
-      margin: 0 auto 0.5rem;
-      padding: 0.6rem 1.8rem;
-      background: #5b7fa6;
-      color: white;
+    .icon-btn {
+      background: rgba(255,255,255,0.12);
       border: none;
-      border-radius: 24px;
-      font-size: 1rem;
+      border-radius: 8px;
+      color: white;
       cursor: pointer;
-      transition: background 0.2s, transform 0.1s;
-      font-family: inherit;
-    }
-    .purr-btn:hover  { background: #4a6a8f; }
-    .purr-btn:active { transform: scale(0.96); }
-
-    .purr-msg {
-      text-align: center;
-      font-size: 1.4rem;
-      min-height: 2rem;
-      letter-spacing: 2px;
-      color: #5b7fa6;
-    }
-
-    /* ── Info cards ── */
-    .cards {
+      padding: 6px 10px;
+      font-size: 0.82rem;
       display: flex;
-      flex-wrap: wrap;
-      gap: 1.2rem;
+      align-items: center;
+      gap: 5px;
+      transition: background 0.15s;
+    }
+    .icon-btn:hover { background: rgba(255,255,255,0.22); }
+
+    /* ── Alert banner ── */
+    #alertBanner {
+      display: none;
+      background: var(--red);
+      color: white;
+      padding: 0.6rem 2rem;
+      font-size: 0.88rem;
+      font-weight: 600;
+      text-align: center;
+      gap: 0.5rem;
+      align-items: center;
       justify-content: center;
-      padding: 2rem 1.5rem;
-      max-width: 900px;
+      flex-wrap: wrap;
+    }
+    #alertBanner.visible { display: flex; }
+    #alertBanner.warn {
+      background: var(--amber);
+    }
+    .alert-item + .alert-item::before { content: ' · '; }
+
+    /* ── Main layout ── */
+    main {
+      max-width: 1100px;
       margin: 0 auto;
+      padding: 1.5rem 1.5rem 3rem;
+    }
+
+    /* ── Readiness section ── */
+    .readiness-section {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.5rem 2rem;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .readiness-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--gray-4);
+      margin-bottom: 0.25rem;
+    }
+
+    .readiness-display {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+
+    #readinessPct {
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1;
+      min-width: 3.5ch;
+    }
+
+    .readiness-unit { font-size: 1.3rem; color: var(--gray-4); font-weight: 600; }
+
+    .readiness-control { display: flex; flex-direction: column; gap: 0.5rem; flex: 1; min-width: 220px; }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 8px;
+      border-radius: 4px;
+      background: var(--gray-2);
+      outline: none;
+      cursor: pointer;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--blue);
+      cursor: pointer;
+      border: 3px solid white;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.22);
+    }
+
+    .readiness-status {
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+    .readiness-status.good  { background: var(--green-light);  color: var(--green); }
+    .readiness-status.warn  { background: var(--amber-light);  color: var(--amber); }
+    .readiness-status.danger{ background: var(--red-light);    color: var(--red);   }
+    .readiness-status.neutral{ background: var(--blue-light);  color: var(--blue);  }
+
+    /* ── Metric cards ── */
+    .cards-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.25rem;
     }
 
     .card {
-      background: white;
-      border-radius: 16px;
-      padding: 1.4rem 1.6rem;
-      width: 250px;
-      box-shadow: 0 4px 14px rgba(91,127,166,0.15);
-      text-align: center;
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.25rem 1.4rem;
+      border-top: 3px solid var(--blue);
+      position: relative;
+      overflow: hidden;
     }
 
-    .card .icon { font-size: 2rem; margin-bottom: 0.5rem; }
-    .card h2    { font-size: 1.1rem; color: #5b7fa6; margin-bottom: 0.4rem; }
-    .card p     { font-size: 0.95rem; line-height: 1.5; color: #4a5a6a; }
+    .card.c-green  { border-top-color: var(--green); }
+    .card.c-amber  { border-top-color: var(--amber); }
+    .card.c-red    { border-top-color: var(--red);   }
+    .card.c-blue   { border-top-color: var(--blue);  }
 
-    /* ── Fun facts ── */
-    .facts-section {
-      background: white;
-      max-width: 620px;
-      margin: 0 auto 3rem;
-      border-radius: 16px;
-      padding: 1.8rem 2rem;
-      box-shadow: 0 4px 14px rgba(91,127,166,0.12);
+    .card-label {
+      font-size: 0.73rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--gray-4);
+      margin-bottom: 0.4rem;
     }
 
-    .facts-section h2 {
-      text-align: center;
-      color: #5b7fa6;
+    .card-value {
+      font-size: 1.9rem;
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1.1;
+    }
+
+    .card-sub {
+      font-size: 0.8rem;
+      color: var(--gray-4);
+      margin-top: 0.3rem;
+    }
+
+    .card-icon {
+      position: absolute;
+      top: 1rem;
+      right: 1.1rem;
+      font-size: 1.4rem;
+      opacity: 0.18;
+    }
+
+    /* ── Burn bar ── */
+    .burn-section {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.4rem 1.8rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .section-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--gray-4);
       margin-bottom: 1rem;
-      font-size: 1.3rem;
     }
 
-    .facts-section ul {
-      list-style: none;
-      padding: 0;
+    .burn-bar-wrap { margin-bottom: 0.8rem; }
+
+    .burn-bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--gray-4);
+      margin-bottom: 4px;
     }
 
-    .facts-section li {
-      padding: 0.5rem 0;
-      border-bottom: 1px solid #e8f0f7;
-      font-size: 0.95rem;
+    .burn-bar-track {
+      height: 14px;
+      background: var(--gray-2);
+      border-radius: 7px;
+      position: relative;
+      overflow: visible;
+    }
+
+    .burn-bar-fill {
+      height: 100%;
+      border-radius: 7px;
+      transition: width 0.4s ease;
+      max-width: 100%;
+    }
+    .burn-bar-fill.spent    { background: var(--blue); }
+    .burn-bar-fill.progress { background: var(--green); }
+    .burn-bar-fill.projected {
+      background: repeating-linear-gradient(
+        45deg, var(--red), var(--red) 4px, #e88 4px, #e88 8px
+      );
+      opacity: 0.75;
+    }
+
+    .burn-bar-projected-marker {
+      position: absolute;
+      top: -4px;
+      height: calc(100% + 8px);
+      width: 2px;
+      background: var(--red);
+      border-radius: 1px;
+    }
+
+    .burn-legend {
+      display: flex;
+      gap: 1.2rem;
+      flex-wrap: wrap;
+      margin-top: 0.6rem;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      color: var(--gray-4);
+    }
+    .legend-dot {
+      width: 10px; height: 10px;
+      border-radius: 3px;
+    }
+    .legend-dot.spent    { background: var(--blue); }
+    .legend-dot.progress { background: var(--green); }
+    .legend-dot.projected {
+      background: repeating-linear-gradient(
+        45deg, var(--red), var(--red) 3px, #e88 3px, #e88 6px
+      );
+    }
+
+    /* ── Two-column layout ── */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+    @media (max-width: 700px) {
+      .two-col { grid-template-columns: 1fr; }
+    }
+
+    /* ── Team panel ── */
+    .panel {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.4rem 1.5rem;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .btn {
+      background: var(--blue);
+      color: white;
+      border: none;
+      border-radius: 7px;
+      padding: 6px 14px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn:hover { background: var(--navy); }
+    .btn.secondary {
+      background: var(--gray-2);
+      color: var(--gray-5);
+    }
+    .btn.secondary:hover { background: var(--gray-3); }
+    .btn.danger { background: var(--red); }
+    .btn.danger:hover { background: #a02018; }
+
+    .team-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.87rem;
+    }
+    .team-table th {
+      text-align: left;
+      font-size: 0.73rem;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      color: var(--gray-4);
+      border-bottom: 2px solid var(--gray-2);
+      padding: 0 0.5rem 0.5rem;
+      font-weight: 700;
+    }
+    .team-table td {
+      padding: 0.55rem 0.5rem;
+      border-bottom: 1px solid var(--gray-2);
+      vertical-align: middle;
+    }
+    .team-table tr:last-child td { border-bottom: none; }
+
+    .hours-input {
+      width: 80px;
+      border: 1px solid var(--gray-3);
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 0.87rem;
+      color: var(--gray-5);
+      text-align: right;
+    }
+    .hours-input:focus {
+      outline: none;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 2px var(--blue-light);
+    }
+
+    .member-bar {
+      height: 5px;
+      background: var(--blue);
+      border-radius: 3px;
+      min-width: 2px;
+      transition: width 0.3s;
+    }
+
+    .add-member-form {
+      display: none;
+      gap: 0.5rem;
+      margin-top: 0.8rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .add-member-form.visible { display: flex; }
+
+    input[type="text"].text-input {
+      border: 1px solid var(--gray-3);
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 0.87rem;
+      color: var(--gray-5);
+      flex: 1;
+      min-width: 120px;
+    }
+    input[type="text"].text-input:focus {
+      outline: none;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 2px var(--blue-light);
+    }
+
+    .empty-state {
+      text-align: center;
+      color: var(--gray-4);
+      font-size: 0.88rem;
+      padding: 1.5rem 0;
+    }
+
+    /* ── Alerts panel ── */
+    .alert-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.75rem 0.9rem;
+      border-radius: 8px;
+      margin-bottom: 0.6rem;
+      font-size: 0.87rem;
       line-height: 1.5;
     }
-    .facts-section li:last-child { border-bottom: none; }
-    .facts-section li::before   { content: '🐾 '; }
+    .alert-card:last-child { margin-bottom: 0; }
+    .alert-card.danger {
+      background: var(--red-light);
+      border-left: 3px solid var(--red);
+      color: #7a1e18;
+    }
+    .alert-card.warn {
+      background: var(--amber-light);
+      border-left: 3px solid var(--amber);
+      color: #7a4500;
+    }
+    .alert-card.good {
+      background: var(--green-light);
+      border-left: 3px solid var(--green);
+      color: #0f5a2f;
+    }
+    .alert-icon { font-size: 1.05rem; flex-shrink: 0; margin-top: 1px; }
+    .alert-text strong { display: block; font-weight: 700; }
+
+    /* ── Settings modal ── */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-backdrop.visible { display: flex; }
+
+    .modal {
+      background: var(--white);
+      border-radius: 14px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.22);
+      padding: 2rem;
+      width: 460px;
+      max-width: calc(100vw - 2rem);
+      max-height: calc(100vh - 2rem);
+      overflow-y: auto;
+    }
+
+    .modal h2 {
+      font-size: 1.15rem;
+      color: var(--navy);
+      margin-bottom: 1.5rem;
+    }
+
+    .form-field { margin-bottom: 1.1rem; }
+
+    .form-field label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      color: var(--gray-4);
+      margin-bottom: 0.35rem;
+    }
+
+    .form-field input[type="text"],
+    .form-field input[type="number"],
+    .form-field input[type="date"] {
+      width: 100%;
+      border: 1px solid var(--gray-3);
+      border-radius: 7px;
+      padding: 8px 12px;
+      font-size: 0.92rem;
+      color: var(--gray-5);
+    }
+    .form-field input:focus {
+      outline: none;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 2px var(--blue-light);
+    }
+
+    .form-hint {
+      font-size: 0.78rem;
+      color: var(--gray-4);
+      margin-top: 0.3rem;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+    }
+
+    /* ── Setup screen ── */
+    #setupScreen {
+      display: none;
+      min-height: calc(100vh - 56px);
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    #setupScreen.visible { display: flex; }
+
+    .setup-card {
+      background: var(--white);
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(26,58,92,0.13);
+      padding: 2.5rem 2.5rem 2rem;
+      width: 480px;
+      max-width: 100%;
+    }
+
+    .setup-card h2 {
+      font-size: 1.5rem;
+      color: var(--navy);
+      margin-bottom: 0.5rem;
+    }
+
+    .setup-card .subtitle {
+      font-size: 0.9rem;
+      color: var(--gray-4);
+      margin-bottom: 2rem;
+    }
 
     /* ── Footer ── */
     footer {
       text-align: center;
-      padding: 1.5rem;
-      font-size: 0.85rem;
-      color: #7a90a6;
+      padding: 1rem;
+      font-size: 0.78rem;
+      color: var(--gray-4);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      main { padding: 1rem; }
+      header { padding: 0 1rem; }
+      .readiness-section { flex-direction: column; gap: 1rem; }
+      #readinessPct { font-size: 2.2rem; }
     }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>Lissu</h1>
-    <p>The most majestic Russian Blue in the whole wide world</p>
+    <div class="header-left">
+      <h1>Profitability Assistant</h1>
+      <span id="projectNameBadge"></span>
+    </div>
+    <div class="header-right">
+      <button class="icon-btn" onclick="openSettings()">&#9881; Settings</button>
+    </div>
   </header>
 
-  <!-- CSS cat illustration -->
-  <div class="cat-wrapper">
-    <div class="cat" id="cat" title="Click me!">
-      <div class="cat-body">
-        <div class="cat-tail"></div>
-        <div class="cat-paws">
-          <div class="paw"></div>
-          <div class="paw"></div>
-        </div>
+  <!-- Alert banner -->
+  <div id="alertBanner"></div>
+
+  <!-- Setup screen (first run) -->
+  <div id="setupScreen">
+    <div class="setup-card">
+      <h2>Set up your project</h2>
+      <p class="subtitle">Enter the project details to start tracking profitability.</p>
+      <div class="form-field">
+        <label>Project Name</label>
+        <input type="text" id="setupName" class="text-input" placeholder="e.g. Website Redesign Q3" style="width:100%" />
       </div>
-      <div class="cat-head">
-        <div class="cat-ear left"></div>
-        <div class="cat-ear right"></div>
-        <div class="cat-eyes">
-          <div class="eye"></div>
-          <div class="eye"></div>
-        </div>
-        <div class="cat-nose"></div>
-        <div class="cat-mouth">
-          <span></span><span></span>
-        </div>
-        <div class="whiskers">
-          <div class="whisker l1"></div>
-          <div class="whisker l2"></div>
-          <div class="whisker r1"></div>
-          <div class="whisker r2"></div>
-        </div>
+      <div class="form-field">
+        <label>Budgeted Hours</label>
+        <input type="number" id="setupBudget" min="1" placeholder="e.g. 500" />
+        <p class="form-hint">Total hours sold to the client</p>
+      </div>
+      <div class="form-field">
+        <label>Alert threshold — hours ahead of progress (%)</label>
+        <input type="number" id="setupThreshold" min="1" max="50" value="10" />
+        <p class="form-hint">Alert when hours used % exceeds readiness % by this margin (default 10)</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" onclick="saveSetup()">Start Tracking</button>
       </div>
     </div>
   </div>
 
-  <button class="purr-btn" onclick="purr()">Pet Lissu</button>
-  <p class="purr-msg" id="purrMsg"></p>
+  <!-- Main dashboard -->
+  <main id="dashboard" style="display:none">
 
-  <!-- Info cards -->
-  <div class="cards">
-    <div class="card">
-      <div class="icon">🐱</div>
-      <h2>Breed</h2>
-      <p>Russian Blue — known for their stunning silver-blue coat and emerald green eyes.</p>
+    <!-- Readiness -->
+    <div class="readiness-section">
+      <div>
+        <div class="readiness-label">Project Readiness</div>
+        <div class="readiness-display">
+          <span id="readinessPct">0</span>
+          <span class="readiness-unit">%</span>
+        </div>
+        <div style="margin-top:0.5rem">
+          <span class="readiness-status neutral" id="readinessStatus">Not started</span>
+        </div>
+      </div>
+      <div class="readiness-control">
+        <input type="range" id="readinessSlider" min="0" max="100" value="0"
+               oninput="onReadinessChange(this.value)" />
+        <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--gray-4)">
+          <span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span>
+        </div>
+      </div>
     </div>
-    <div class="card">
-      <div class="icon">💚</div>
-      <h2>Personality</h2>
-      <p>Gentle, intelligent, and a little shy at first — but endlessly loyal to her family.</p>
+
+    <!-- Metric cards -->
+    <div class="cards-row" id="metricsRow">
+      <div class="card c-blue">
+        <div class="card-icon">⏱</div>
+        <div class="card-label">Budget Hours</div>
+        <div class="card-value" id="metBudget">—</div>
+        <div class="card-sub">Total sold to client</div>
+      </div>
+      <div class="card c-blue">
+        <div class="card-icon">📊</div>
+        <div class="card-label">Hours Spent</div>
+        <div class="card-value" id="metSpent">0</div>
+        <div class="card-sub" id="metSpentSub">of budget</div>
+      </div>
+      <div class="card c-green" id="cardRemaining">
+        <div class="card-icon">✅</div>
+        <div class="card-label">Hours Remaining</div>
+        <div class="card-value" id="metRemaining">—</div>
+        <div class="card-sub" id="metRemainingSub">left in budget</div>
+      </div>
+      <div class="card c-blue" id="cardProjected">
+        <div class="card-icon">🔮</div>
+        <div class="card-label">Projected Total</div>
+        <div class="card-value" id="metProjected">—</div>
+        <div class="card-sub" id="metProjectedSub">needs readiness > 0%</div>
+      </div>
     </div>
-    <div class="card">
-      <div class="icon">✨</div>
-      <h2>Special Talent</h2>
-      <p>Expert napper, champion biscuit-maker, and professional window watcher.</p>
+
+    <!-- Burn visualization -->
+    <div class="burn-section">
+      <div class="section-title">Hour Burn vs Progress</div>
+      <div class="burn-bar-wrap">
+        <div class="burn-bar-label">
+          <span>Hours spent vs budget</span>
+          <span id="burnSpentLabel">0 / 0h</span>
+        </div>
+        <div class="burn-bar-track">
+          <div class="burn-bar-fill spent" id="burnSpentBar" style="width:0%"></div>
+          <div class="burn-bar-projected-marker" id="burnProjectedMarker" style="display:none"></div>
+        </div>
+      </div>
+      <div class="burn-bar-wrap">
+        <div class="burn-bar-label">
+          <span>Project readiness</span>
+          <span id="burnProgressLabel">0%</span>
+        </div>
+        <div class="burn-bar-track">
+          <div class="burn-bar-fill progress" id="burnProgressBar" style="width:0%"></div>
+        </div>
+      </div>
+      <div class="burn-legend">
+        <span class="legend-item"><span class="legend-dot spent"></span>Hours spent</span>
+        <span class="legend-item"><span class="legend-dot progress"></span>Project readiness</span>
+        <span class="legend-item" id="projectedLegend" style="display:none">
+          <span class="legend-dot projected"></span>Projected overrun
+        </span>
+      </div>
+    </div>
+
+    <!-- Team + Alerts -->
+    <div class="two-col">
+
+      <!-- Team panel -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="section-title" style="margin-bottom:0">Team Hours</div>
+          <button class="btn" onclick="toggleAddMember()">+ Add Member</button>
+        </div>
+
+        <div class="add-member-form" id="addMemberForm">
+          <input type="text" class="text-input" id="newMemberName" placeholder="Name" onkeydown="if(event.key==='Enter')confirmAddMember()" />
+          <input type="number" class="hours-input" id="newMemberHours" placeholder="hrs" min="0" onkeydown="if(event.key==='Enter')confirmAddMember()" />
+          <button class="btn" onclick="confirmAddMember()">Add</button>
+          <button class="btn secondary" onclick="cancelAddMember()">Cancel</button>
+        </div>
+
+        <table class="team-table" id="teamTable">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th style="text-align:right">Hours</th>
+              <th style="text-align:right">Share</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="teamBody">
+            <tr><td colspan="4" class="empty-state">No team members yet. Add one above.</td></tr>
+          </tbody>
+        </table>
+        <div id="teamTotal" style="display:none; margin-top:0.7rem; text-align:right; font-size:0.82rem; color:var(--gray-4); font-weight:600;"></div>
+      </div>
+
+      <!-- Alerts panel -->
+      <div class="panel">
+        <div class="section-title">Status & Alerts</div>
+        <div id="alertsContainer">
+          <div class="alert-card good">
+            <span class="alert-icon">✓</span>
+            <span class="alert-text"><strong>All good</strong>Log hours and set readiness to see projections.</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer id="footerArea" style="display:none">Profitability Assistant &mdash; data stored locally in your browser</footer>
+
+  <!-- Settings modal -->
+  <div class="modal-backdrop" id="settingsModal">
+    <div class="modal">
+      <h2>Project Settings</h2>
+      <div class="form-field">
+        <label>Project Name</label>
+        <input type="text" id="settingName" />
+      </div>
+      <div class="form-field">
+        <label>Budgeted Hours</label>
+        <input type="number" id="settingBudget" min="1" />
+        <p class="form-hint">Total hours sold to the client</p>
+      </div>
+      <div class="form-field">
+        <label>Alert threshold (%)</label>
+        <input type="number" id="settingThreshold" min="1" max="50" />
+        <p class="form-hint">Alert when hours % exceeds readiness % by this margin</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn secondary" onclick="closeSettings()">Cancel</button>
+        <button class="btn" onclick="saveSettings()">Save</button>
+      </div>
     </div>
   </div>
-
-  <!-- Fun facts -->
-  <div class="facts-section">
-    <h2>Fun Facts About Russian Blues</h2>
-    <ul>
-      <li>Their coat has a unique double layer that shimmers in the light.</li>
-      <li>Russian Blues are known to be hypoallergenic — great for sensitive noses!</li>
-      <li>They are very quiet cats with soft, gentle voices.</li>
-      <li>They remember routines and will remind you when it's dinner time.</li>
-      <li>Russian Blues can live up to 15–20 years with love and care.</li>
-      <li>They tend to pick one special person as their very best friend.</li>
-    </ul>
-  </div>
-
-  <footer>
-    Made with love for Lissu &hearts;
-  </footer>
 
   <script>
-    const responses = [
-      'Purrrrrr... 😻',
-      'Mrrrow~ 🐾',
-      'Purr purr purr ❤️',
-      '*slow blink* 💚',
-      'Prrr prrr prrr...',
-      'Miau! 🌟',
-      '*head bumps you* 💙',
-    ];
+    const STORAGE_KEY = 'profitability_v1';
 
-    let last = -1;
+    let state = {
+      project: { name: '', budgetHours: 0, alertThreshold: 10, readiness: 0 },
+      team: []
+    };
 
-    function purr() {
-      let idx;
-      do { idx = Math.floor(Math.random() * responses.length); } while (idx === last);
-      last = idx;
-      const msg = document.getElementById('purrMsg');
-      msg.textContent = responses[idx];
-      // tiny wiggle on the cat
-      const cat = document.getElementById('cat');
-      cat.style.transform = 'scale(1.12)';
-      setTimeout(() => cat.style.transform = '', 220);
+    // ── Persistence ──
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) state = JSON.parse(raw);
+      } catch {}
     }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    // ── Boot ──
+
+    function boot() {
+      loadState();
+      if (!state.project.name || !state.project.budgetHours) {
+        document.getElementById('setupScreen').classList.add('visible');
+      } else {
+        showDashboard();
+      }
+    }
+
+    function showDashboard() {
+      document.getElementById('setupScreen').classList.remove('visible');
+      document.getElementById('dashboard').style.display = 'block';
+      document.getElementById('footerArea').style.display = 'block';
+      render();
+    }
+
+    // ── Setup ──
+
+    function saveSetup() {
+      const name = document.getElementById('setupName').value.trim();
+      const budget = parseFloat(document.getElementById('setupBudget').value);
+      const threshold = parseFloat(document.getElementById('setupThreshold').value) || 10;
+      if (!name || !budget || budget <= 0) {
+        alert('Please enter a project name and a valid budget.');
+        return;
+      }
+      state.project.name = name;
+      state.project.budgetHours = budget;
+      state.project.alertThreshold = threshold;
+      state.project.readiness = 0;
+      saveState();
+      showDashboard();
+    }
+
+    // ── Settings modal ──
+
+    function openSettings() {
+      document.getElementById('settingName').value = state.project.name;
+      document.getElementById('settingBudget').value = state.project.budgetHours;
+      document.getElementById('settingThreshold').value = state.project.alertThreshold;
+      document.getElementById('settingsModal').classList.add('visible');
+    }
+
+    function closeSettings() {
+      document.getElementById('settingsModal').classList.remove('visible');
+    }
+
+    function saveSettings() {
+      const name = document.getElementById('settingName').value.trim();
+      const budget = parseFloat(document.getElementById('settingBudget').value);
+      const threshold = parseFloat(document.getElementById('settingThreshold').value) || 10;
+      if (!name || !budget || budget <= 0) {
+        alert('Please enter a project name and a valid budget.');
+        return;
+      }
+      state.project.name = name;
+      state.project.budgetHours = budget;
+      state.project.alertThreshold = threshold;
+      saveState();
+      closeSettings();
+      render();
+    }
+
+    // ── Readiness ──
+
+    function onReadinessChange(val) {
+      state.project.readiness = parseInt(val, 10);
+      saveState();
+      render();
+    }
+
+    // ── Team members ──
+
+    function toggleAddMember() {
+      const form = document.getElementById('addMemberForm');
+      form.classList.toggle('visible');
+      if (form.classList.contains('visible')) {
+        document.getElementById('newMemberName').focus();
+      }
+    }
+
+    function cancelAddMember() {
+      document.getElementById('addMemberForm').classList.remove('visible');
+      document.getElementById('newMemberName').value = '';
+      document.getElementById('newMemberHours').value = '';
+    }
+
+    function confirmAddMember() {
+      const name = document.getElementById('newMemberName').value.trim();
+      const hours = parseFloat(document.getElementById('newMemberHours').value) || 0;
+      if (!name) { document.getElementById('newMemberName').focus(); return; }
+      state.team.push({ id: Date.now(), name, hours });
+      saveState();
+      cancelAddMember();
+      render();
+    }
+
+    function updateHours(id, val) {
+      const member = state.team.find(m => m.id === id);
+      if (member) {
+        member.hours = Math.max(0, parseFloat(val) || 0);
+        saveState();
+        render();
+      }
+    }
+
+    function removeMember(id) {
+      state.team = state.team.filter(m => m.id !== id);
+      saveState();
+      render();
+    }
+
+    // ── Calculations ──
+
+    function calcMetrics() {
+      const budget = state.project.budgetHours;
+      const readiness = state.project.readiness;
+      const totalSpent = state.team.reduce((s, m) => s + m.hours, 0);
+      const hoursUsedPct = budget > 0 ? (totalSpent / budget) * 100 : 0;
+      const remaining = budget - totalSpent;
+
+      let projectedTotal = null;
+      let projectedOverrun = null;
+      if (readiness > 0 && totalSpent > 0) {
+        projectedTotal = (totalSpent / readiness) * 100;
+        projectedOverrun = projectedTotal - budget;
+      }
+
+      return { budget, readiness, totalSpent, hoursUsedPct, remaining, projectedTotal, projectedOverrun };
+    }
+
+    // ── Render ──
+
+    function render() {
+      const { budget, readiness, totalSpent, hoursUsedPct, remaining,
+              projectedTotal, projectedOverrun } = calcMetrics();
+      const threshold = state.project.alertThreshold;
+
+      // Header badge
+      document.getElementById('projectNameBadge').textContent = state.project.name;
+
+      // Readiness display
+      document.getElementById('readinessPct').textContent = readiness;
+      document.getElementById('readinessSlider').value = readiness;
+
+      const statusEl = document.getElementById('readinessStatus');
+      let statusClass = 'neutral', statusText = 'Not started';
+      if (readiness === 100) { statusClass = 'good'; statusText = 'Complete'; }
+      else if (readiness >= 75) { statusClass = 'good'; statusText = 'Advanced'; }
+      else if (readiness >= 50) { statusClass = 'neutral'; statusText = 'Mid-project'; }
+      else if (readiness >= 25) { statusClass = 'warn'; statusText = 'Early stage'; }
+      else if (readiness > 0)   { statusClass = 'warn'; statusText = 'Just started'; }
+      statusEl.className = 'readiness-status ' + statusClass;
+      statusEl.textContent = statusText;
+
+      // Metric cards
+      document.getElementById('metBudget').textContent = fmt(budget) + 'h';
+      document.getElementById('metSpent').textContent = fmt(totalSpent) + 'h';
+      document.getElementById('metSpentSub').textContent = pct(hoursUsedPct) + '% of budget';
+
+      const remCard = document.getElementById('cardRemaining');
+      document.getElementById('metRemaining').textContent = fmt(remaining) + 'h';
+      document.getElementById('metRemainingSub').textContent = remaining < 0
+        ? 'over budget already' : 'left in budget';
+      remCard.className = 'card ' + (remaining < 0 ? 'c-red' : remaining < budget * 0.15 ? 'c-amber' : 'c-green');
+
+      const projCard = document.getElementById('cardProjected');
+      const projEl = document.getElementById('metProjected');
+      const projSub = document.getElementById('metProjectedSub');
+      if (projectedTotal !== null) {
+        projEl.textContent = fmt(projectedTotal) + 'h';
+        if (projectedOverrun > 0) {
+          projSub.textContent = '+' + fmt(projectedOverrun) + 'h over budget';
+          projCard.className = 'card c-red';
+        } else {
+          projSub.textContent = fmt(-projectedOverrun) + 'h under budget';
+          projCard.className = 'card c-green';
+        }
+      } else {
+        projEl.textContent = '—';
+        projSub.textContent = 'log hours & set readiness';
+        projCard.className = 'card c-blue';
+      }
+
+      // Burn bars
+      const spentBarPct = Math.min(100, hoursUsedPct);
+      document.getElementById('burnSpentBar').style.width = spentBarPct + '%';
+      document.getElementById('burnSpentLabel').textContent = fmt(totalSpent) + ' / ' + fmt(budget) + 'h';
+      document.getElementById('burnProgressBar').style.width = readiness + '%';
+      document.getElementById('burnProgressLabel').textContent = readiness + '%';
+
+      const marker = document.getElementById('burnProjectedMarker');
+      const legend = document.getElementById('projectedLegend');
+      if (projectedTotal !== null && projectedTotal > budget) {
+        const markerPct = Math.min(130, (projectedTotal / budget) * 100);
+        marker.style.left = Math.min(100, markerPct) + '%';
+        marker.style.display = 'block';
+        legend.style.display = 'flex';
+      } else {
+        marker.style.display = 'none';
+        legend.style.display = 'none';
+      }
+
+      // Team table
+      renderTeamTable(totalSpent);
+
+      // Alerts
+      renderAlerts({ budget, readiness, totalSpent, hoursUsedPct, remaining, projectedTotal, projectedOverrun, threshold });
+
+      // Alert banner
+      renderBanner({ projectedTotal, projectedOverrun, hoursUsedPct, readiness, threshold });
+    }
+
+    function renderTeamTable(totalSpent) {
+      const tbody = document.getElementById('teamBody');
+      const totalEl = document.getElementById('teamTotal');
+      if (state.team.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No team members yet. Add one above.</td></tr>';
+        totalEl.style.display = 'none';
+        return;
+      }
+      tbody.innerHTML = state.team.map(m => {
+        const share = totalSpent > 0 ? (m.hours / totalSpent) * 100 : 0;
+        const barWidth = totalSpent > 0 ? Math.max(2, (m.hours / totalSpent) * 100) : 0;
+        return `<tr>
+          <td>
+            <div style="font-weight:600">${esc(m.name)}</div>
+            <div style="margin-top:4px;width:80px"><div class="member-bar" style="width:${barWidth}%"></div></div>
+          </td>
+          <td style="text-align:right">
+            <input type="number" class="hours-input" value="${m.hours}" min="0"
+              onchange="updateHours(${m.id}, this.value)"
+              oninput="updateHours(${m.id}, this.value)" />
+          </td>
+          <td style="text-align:right;color:var(--gray-4)">${pct(share)}%</td>
+          <td style="text-align:right">
+            <button class="btn danger" style="padding:3px 8px;font-size:0.75rem" onclick="removeMember(${m.id})">✕</button>
+          </td>
+        </tr>`;
+      }).join('');
+      const total = state.team.reduce((s, m) => s + m.hours, 0);
+      totalEl.textContent = 'Total: ' + fmt(total) + 'h';
+      totalEl.style.display = 'block';
+    }
+
+    function renderAlerts({ budget, readiness, totalSpent, hoursUsedPct, remaining, projectedTotal, projectedOverrun, threshold }) {
+      const container = document.getElementById('alertsContainer');
+      const alerts = [];
+
+      if (totalSpent === 0 && readiness === 0) {
+        container.innerHTML = `<div class="alert-card good">
+          <span class="alert-icon">✓</span>
+          <span class="alert-text"><strong>Ready to track</strong>Add team members, log hours, and update readiness to see projections.</span>
+        </div>`;
+        return;
+      }
+
+      // Alert 1: projected overrun
+      if (projectedTotal !== null && projectedOverrun > 0) {
+        alerts.push({
+          type: 'danger',
+          icon: '⚠',
+          title: 'Projected budget overrun',
+          body: `At the current rate, the project will need <strong>${fmt(projectedTotal)}h</strong> total — <strong>${fmt(projectedOverrun)}h</strong> over the ${fmt(budget)}h budget (${pct((projectedOverrun/budget)*100)}% overrun).`
+        });
+      } else if (projectedTotal !== null && projectedOverrun <= 0) {
+        alerts.push({
+          type: 'good',
+          icon: '✓',
+          title: 'On track for profitability',
+          body: `Projected total: <strong>${fmt(projectedTotal)}h</strong> — <strong>${fmt(-projectedOverrun)}h under budget</strong>.`
+        });
+      }
+
+      // Alert 2: hours % vs readiness % threshold
+      if (totalSpent > 0 && readiness > 0) {
+        const gap = hoursUsedPct - readiness;
+        if (gap > threshold) {
+          alerts.push({
+            type: 'danger',
+            icon: '⚠',
+            title: 'Hours running ahead of progress',
+            body: `<strong>${pct(hoursUsedPct)}% of budget</strong> has been used, but only <strong>${readiness}% of the project is complete</strong> — a gap of ${pct(gap)} percentage points (threshold: ${threshold}pp).`
+          });
+        } else if (gap > threshold * 0.6) {
+          alerts.push({
+            type: 'warn',
+            icon: '⚡',
+            title: 'Hours approaching threshold',
+            body: `${pct(hoursUsedPct)}% of budget spent vs ${readiness}% readiness. Gap is ${pct(gap)}pp — approaching the ${threshold}pp alert threshold.`
+          });
+        }
+      }
+
+      // Budget almost exhausted
+      if (remaining < budget * 0.1 && remaining >= 0 && totalSpent > 0) {
+        alerts.push({
+          type: 'warn',
+          icon: '⏳',
+          title: 'Budget nearly exhausted',
+          body: `Only <strong>${fmt(remaining)}h</strong> remaining (${pct((remaining/budget)*100)}% of budget), but project is ${readiness}% complete.`
+        });
+      }
+
+      if (remaining < 0 && totalSpent > 0) {
+        alerts.push({
+          type: 'danger',
+          icon: '🚨',
+          title: 'Over budget',
+          body: `Hours logged (<strong>${fmt(totalSpent)}h</strong>) already exceed the budget of ${fmt(budget)}h by <strong>${fmt(-remaining)}h</strong>.`
+        });
+      }
+
+      if (alerts.length === 0) {
+        alerts.push({
+          type: 'good',
+          icon: '✓',
+          title: 'Looking good',
+          body: `Hours and progress are aligned. Keep tracking regularly.`
+        });
+      }
+
+      container.innerHTML = alerts.map(a => `
+        <div class="alert-card ${a.type}">
+          <span class="alert-icon">${a.icon}</span>
+          <span class="alert-text"><strong>${a.title}</strong>${a.body}</span>
+        </div>`).join('');
+    }
+
+    function renderBanner({ projectedTotal, projectedOverrun, hoursUsedPct, readiness, threshold }) {
+      const banner = document.getElementById('alertBanner');
+      const items = [];
+
+      if (projectedTotal !== null && projectedOverrun > 0) {
+        items.push(`Projected overrun: +${fmt(projectedOverrun)}h`);
+      }
+      if (readiness > 0 && hoursUsedPct - readiness > threshold) {
+        items.push(`Hours ahead of progress by ${pct(hoursUsedPct - readiness)}pp`);
+      }
+
+      if (items.length > 0) {
+        banner.innerHTML = '⚠ &nbsp;' + items.map(i => `<span class="alert-item">${i}</span>`).join('');
+        banner.classList.add('visible');
+        banner.className = 'alert-banner visible';
+        // Use warn color if only threshold alert, red if overrun
+        if (projectedOverrun > 0) {
+          banner.style.background = 'var(--red)';
+        } else {
+          banner.style.background = 'var(--amber)';
+        }
+      } else {
+        banner.classList.remove('visible');
+      }
+    }
+
+    // ── Helpers ──
+
+    function fmt(n) {
+      if (n === null || isNaN(n)) return '—';
+      return Math.round(n).toLocaleString();
+    }
+
+    function pct(n) {
+      if (n === null || isNaN(n)) return '—';
+      return Math.round(n * 10) / 10;
+    }
+
+    function esc(str) {
+      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    // ── Close modal on backdrop click ──
+    document.getElementById('settingsModal').addEventListener('click', function(e) {
+      if (e.target === this) closeSettings();
+    });
+
+    // ── Init ──
+    boot();
   </script>
 </body>
 </html>
