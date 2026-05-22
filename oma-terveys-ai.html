@@ -732,5 +732,130 @@
   <div class="phone-label">AI Assistant – conversation and appointment booking</div>
 </div>
 
+<script>
+// ── Book appointment flow ──────────────────────────────────────────────────
+
+const bookBtn = document.querySelector('.alert-card .alert-action');
+const alertCard = document.querySelector('.alert-card');
+const calJune = document.querySelector('.cal-month.urgent');
+
+bookBtn.addEventListener('click', () => {
+  // Update the alert card to a booked state
+  alertCard.style.borderLeftColor = '#006E5A';
+  alertCard.innerHTML = `
+    <div class="alert-top">
+      <span class="alert-badge info">Booked ✓</span>
+      <span class="alert-age">Tue 9 Jun 2026</span>
+    </div>
+    <div class="alert-title">Breast ultrasound – appointment confirmed</div>
+    <div class="alert-body">Terveystalo Kamppi, 2nd floor · 10:30 · Radiologist Hakala.<br>A calendar invite and reminder have been sent.</div>
+  `;
+
+  // Update the June calendar card
+  calJune.classList.remove('urgent');
+  calJune.querySelector('.cal-event-sub').textContent = 'Booked ✓';
+  calJune.querySelector('.cal-event-sub').style.color = '#006E5A';
+});
+
+// ── Working chat input ─────────────────────────────────────────────────────
+
+const replies = [
+  {
+    keywords: ['ultrasound', 'scan', 'breast', 'book', 'appointment', 'june'],
+    text: `Your breast ultrasound is now booked for <strong>Tue 9 Jun 2026 at 10:30</strong> at Terveystalo Kamppi. You'll get a reminder the day before. No preparation needed — just arrive a few minutes early.`
+  },
+  {
+    keywords: ['mammogram', 'mammography', 'screening', '45'],
+    text: `The national mammography screening programme in Finland starts at age 45. Since you're 43, you're about two years away. Many women in your situation choose a private mammogram in the meantime — I can check availability at your nearest clinic if you'd like.`
+  },
+  {
+    keywords: ['meat', 'diet', 'food', 'eating', 'red', 'nutrition', 'grocery', 'purchase'],
+    text: `Based on your S Group loyalty data, your red meat purchases have gone up roughly 40% over the past three months. For women around 43, keeping red meat to 2–3 portions a week is a common heart-health guideline. Would you like some practical swap ideas?`
+  },
+  {
+    keywords: ['sleep', 'tired', 'fatigue', 'rest', 'oura'],
+    text: `Your Apple Watch shows your average sleep has been <strong>6h 12min</strong> over the past two weeks — slightly below the 7–8 hour range recommended for your age group. Would you like me to flag this for your next appointment?`
+  },
+  {
+    keywords: ['cholesterol', 'heart', 'blood', 'pressure', 'cardiovascular'],
+    text: `Your last cholesterol check on Kanta was in <strong>January 2024</strong>. Based on your profile, a check every 1–2 years is generally advised. I've added a recommended check to your January 2027 calendar — want me to book it now instead?`
+  },
+  {
+    keywords: ['dental', 'teeth', 'tooth', 'dentist'],
+    text: `Your dental check-up is already booked for <strong>August 2026</strong>. Everything looks good there — no action needed.`
+  },
+  {
+    keywords: ['data', 'privacy', 'share', 'kanta', 'oura', 'watch', 'loyalty'],
+    text: `You currently have Kanta Records, Apple Watch, and your S Group loyalty card connected. Your Oura Ring is not connected yet. All data stays under your control — you can disconnect any source at any time in the Data Sources settings.`
+  },
+];
+
+const fallbacks = [
+  `I don't have specific data on that right now, but I can flag it for your next appointment. Would you like me to do that?`,
+  `That's a great question. Based on your current health data, there's nothing urgent to flag — but I'd suggest raising it with your doctor at your next visit.`,
+  `I'm not seeing anything in your records related to that. If it's something you've noticed recently, it might be worth booking a check-up. Want me to find an available slot?`,
+];
+let fallbackIdx = 0;
+
+function getReply(input) {
+  const lower = input.toLowerCase();
+  for (const r of replies) {
+    if (r.keywords.some(k => lower.includes(k))) return r.text;
+  }
+  return fallbacks[fallbackIdx++ % fallbacks.length];
+}
+
+function formatTime() {
+  const d = new Date();
+  return `${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`;
+}
+
+function appendMsg(html, role) {
+  const messages = document.querySelector('.chat-messages');
+  const div = document.createElement('div');
+  div.className = `msg ${role}`;
+  div.innerHTML = `<div class="msg-bubble">${html}</div><div class="msg-time">${formatTime()}</div>`;
+  messages.appendChild(div);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+function appendTyping() {
+  const messages = document.querySelector('.chat-messages');
+  const div = document.createElement('div');
+  div.className = 'msg ai';
+  div.id = 'typing-indicator';
+  div.innerHTML = `<div class="msg-bubble" style="color:#999;font-style:italic">Typing…</div>`;
+  messages.appendChild(div);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+function sendMessage() {
+  const input = document.querySelector('.chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+
+  appendMsg(text, 'user');
+  input.value = '';
+
+  appendTyping();
+  setTimeout(() => {
+    document.getElementById('typing-indicator')?.remove();
+    appendMsg(getReply(text), 'ai');
+  }, 900 + Math.random() * 500);
+}
+
+document.querySelector('.chat-send').addEventListener('click', sendMessage);
+document.querySelector('.chat-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') sendMessage();
+});
+
+// Suggestion chips in the chat also trigger send
+document.querySelector('.chat-messages').addEventListener('click', e => {
+  if (e.target.classList.contains('chip')) {
+    document.querySelector('.chat-input').value = e.target.textContent.replace(/^[✓\s]+/, '');
+    sendMessage();
+  }
+});
+</script>
 </body>
 </html>
