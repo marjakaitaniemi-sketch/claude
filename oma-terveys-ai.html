@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oma Terveys AI – Terveystalo</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #f0f4f8;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 40px 20px;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  /* Phone frame */
+  .phone {
+    width: 390px;
+    height: 844px;
+    background: #fff;
+    border-radius: 50px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.25), 0 0 0 12px #1a1a1a, 0 0 0 14px #333;
+    overflow: hidden;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .phone-notch {
+    position: absolute;
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: 120px; height: 34px;
+    background: #1a1a1a;
+    border-radius: 0 0 24px 24px;
+    z-index: 100;
+  }
+
+  .screen {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: #f7f9fc;
+  }
+
+  /* Status bar */
+  .status-bar {
+    background: #fff;
+    padding: 14px 24px 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: #111;
+    flex-shrink: 0;
+  }
+  .status-icons { display: flex; gap: 6px; align-items: center; }
+  .status-icons svg { width: 16px; height: 16px; }
+
+  /* App header */
+  .app-header {
+    background: #fff;
+    padding: 8px 20px 16px;
+    border-bottom: 1px solid #eee;
+    flex-shrink: 0;
+  }
+  .brand { display: flex; align-items: center; gap: 8px; }
+  .brand-logo {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, #006E5A, #00A07C);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 800; font-size: 14px;
+  }
+  .brand-name { font-size: 15px; font-weight: 700; color: #1a1a2e; }
+  .brand-sub { font-size: 11px; color: #006E5A; font-weight: 600; letter-spacing: 0.5px; }
+
+  /* Scroll content */
+  .scroll-content {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 80px;
+    scroll-behavior: smooth;
+  }
+  .scroll-content::-webkit-scrollbar { display: none; }
+
+  /* Greeting card */
+  .greeting-card {
+    background: linear-gradient(145deg, #006E5A, #00A07C);
+    margin: 16px;
+    border-radius: 20px;
+    padding: 20px;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+  }
+  .greeting-card::after {
+    content: '';
+    position: absolute;
+    right: -30px; top: -30px;
+    width: 140px; height: 140px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 50%;
+  }
+  .greeting-card::before {
+    content: '';
+    position: absolute;
+    right: 30px; bottom: -40px;
+    width: 100px; height: 100px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 50%;
+  }
+  .greeting-label { font-size: 12px; opacity: 0.8; font-weight: 500; margin-bottom: 4px; }
+  .greeting-name { font-size: 22px; font-weight: 700; margin-bottom: 12px; }
+  .health-score-row { display: flex; gap: 12px; }
+  .score-box {
+    background: rgba(255,255,255,0.15);
+    border-radius: 12px;
+    padding: 10px 14px;
+    flex: 1;
+    backdrop-filter: blur(4px);
+  }
+  .score-val { font-size: 22px; font-weight: 800; }
+  .score-lbl { font-size: 10px; opacity: 0.85; margin-top: 1px; }
+
+  /* Section */
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 16px 8px;
+  }
+  .section-title { font-size: 16px; font-weight: 700; color: #1a1a2e; }
+  .section-link { font-size: 13px; color: #006E5A; font-weight: 600; }
+
+  /* Alert card */
+  .alert-card {
+    margin: 0 16px 12px;
+    background: #fff;
+    border-radius: 16px;
+    padding: 16px;
+    border-left: 4px solid #FF6B35;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .alert-card:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+  .alert-card.info { border-left-color: #006E5A; }
+  .alert-card.warn { border-left-color: #F5A623; }
+  .alert-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+  .alert-badge {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    background: #FF6B35;
+    color: #fff;
+  }
+  .alert-badge.info { background: #E6F4F0; color: #006E5A; }
+  .alert-badge.warn { background: #FEF3E2; color: #C47A00; }
+  .alert-age { font-size: 11px; color: #999; }
+  .alert-title { font-size: 14px; font-weight: 700; color: #1a1a2e; margin-bottom: 4px; }
+  .alert-body { font-size: 13px; color: #555; line-height: 1.5; }
+  .alert-action {
+    display: inline-block;
+    margin-top: 12px;
+    background: #006E5A;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .alert-action:hover { background: #005548; }
+  .alert-action.secondary {
+    background: #F0F7F5;
+    color: #006E5A;
+  }
+
+  /* Calendar strip */
+  .cal-strip {
+    padding: 0 16px;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    margin-bottom: 4px;
+  }
+  .cal-strip::-webkit-scrollbar { display: none; }
+  .cal-month {
+    flex-shrink: 0;
+    background: #fff;
+    border-radius: 14px;
+    padding: 12px 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    min-width: 130px;
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+  .cal-month:hover { transform: scale(1.03); }
+  .cal-month.has-event { border-top: 3px solid #006E5A; }
+  .cal-month.urgent { border-top-color: #FF6B35; }
+  .cal-month-name { font-size: 11px; color: #999; font-weight: 600; text-transform: uppercase; margin-bottom: 4px; }
+  .cal-event-title { font-size: 13px; color: #1a1a2e; font-weight: 600; line-height: 1.3; }
+  .cal-event-sub { font-size: 11px; color: #006E5A; margin-top: 2px; }
+  .cal-empty { font-size: 12px; color: #ccc; font-style: italic; }
+
+  /* Data sources */
+  .data-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 0 16px;
+  }
+  .data-source {
+    background: #fff;
+    border-radius: 14px;
+    padding: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+  .data-source:hover { transform: scale(1.02); }
+  .ds-icon { font-size: 22px; margin-bottom: 6px; }
+  .ds-name { font-size: 12px; font-weight: 700; color: #1a1a2e; }
+  .ds-status { font-size: 11px; margin-top: 3px; }
+  .ds-status.connected { color: #006E5A; }
+  .ds-status.disconnected { color: #bbb; }
+  .ds-dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    margin-right: 4px;
+    background: #006E5A;
+    vertical-align: middle;
+  }
+  .ds-dot.off { background: #ccc; }
+
+  /* AI Chat */
+  .ai-chat-trigger {
+    margin: 12px 16px 0;
+    background: linear-gradient(135deg, #f0f7f5, #e8f5f0);
+    border: 1.5px solid #c8e8de;
+    border-radius: 16px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: box-shadow 0.15s;
+  }
+  .ai-chat-trigger:hover { box-shadow: 0 4px 12px rgba(0,110,90,0.15); }
+  .ai-avatar {
+    width: 40px; height: 40px;
+    background: linear-gradient(135deg, #006E5A, #00A07C);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 18px; flex-shrink: 0;
+  }
+  .ai-prompt { font-size: 13px; color: #444; }
+  .ai-prompt strong { color: #006E5A; display: block; font-size: 12px; margin-bottom: 2px; }
+
+  /* Bottom nav */
+  .bottom-nav {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: #fff;
+    border-top: 1px solid #eee;
+    display: flex;
+    padding: 8px 0 20px;
+    z-index: 50;
+  }
+  .nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    cursor: pointer;
+    padding: 4px 0;
+  }
+  .nav-icon { font-size: 22px; }
+  .nav-label { font-size: 10px; color: #999; font-weight: 500; }
+  .nav-item.active .nav-label { color: #006E5A; font-weight: 700; }
+  .nav-dot {
+    width: 5px; height: 5px;
+    background: #FF6B35;
+    border-radius: 50%;
+    position: absolute;
+    top: -2px; right: -2px;
+  }
+  .nav-icon-wrap { position: relative; }
+
+  /* Second screen: AI chat panel */
+  .chat-screen {
+    width: 390px;
+    height: 844px;
+    background: #fff;
+    border-radius: 50px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.25), 0 0 0 12px #1a1a1a, 0 0 0 14px #333;
+    overflow: hidden;
+    position: relative;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .chat-header {
+    background: #fff;
+    padding: 52px 20px 14px;
+    border-bottom: 1px solid #eee;
+    flex-shrink: 0;
+  }
+  .chat-header-inner { display: flex; align-items: center; gap: 12px; }
+  .chat-avatar-lg {
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, #006E5A, #00A07C);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 20px;
+  }
+  .chat-title { font-size: 16px; font-weight: 700; color: #1a1a2e; }
+  .chat-subtitle { font-size: 12px; color: #999; }
+  .chat-online { display: flex; align-items: center; gap: 4px; font-size: 11px; color: #006E5A; font-weight: 600; margin-top: 1px; }
+  .online-dot { width: 6px; height: 6px; border-radius: 50%; background: #00c48c; }
+
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .chat-messages::-webkit-scrollbar { display: none; }
+
+  .msg { max-width: 80%; }
+  .msg.ai { align-self: flex-start; }
+  .msg.user { align-self: flex-end; }
+  .msg-bubble {
+    border-radius: 18px;
+    padding: 12px 14px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .msg.ai .msg-bubble { background: #f0f7f5; color: #1a1a2e; border-bottom-left-radius: 4px; }
+  .msg.user .msg-bubble { background: #006E5A; color: #fff; border-bottom-right-radius: 4px; }
+  .msg-time { font-size: 10px; color: #bbb; margin-top: 4px; padding: 0 4px; }
+  .msg.user .msg-time { text-align: right; }
+
+  .suggestion-chips {
+    display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;
+  }
+  .chip {
+    background: #fff;
+    border: 1.5px solid #c8e8de;
+    color: #006E5A;
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+    white-space: nowrap;
+  }
+  .chip:hover { background: #e8f5f0; }
+
+  .chat-input-area {
+    padding: 12px 16px 28px;
+    background: #fff;
+    border-top: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .chat-input {
+    flex: 1;
+    background: #f5f5f5;
+    border: none;
+    border-radius: 24px;
+    padding: 12px 16px;
+    font-size: 14px;
+    outline: none;
+    color: #333;
+    font-family: inherit;
+  }
+  .chat-send {
+    width: 42px; height: 42px;
+    background: #006E5A;
+    border: none;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s;
+    flex-shrink: 0;
+  }
+  .chat-send:hover { background: #005548; }
+
+  /* Labels below phones */
+  .phone-wrap { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .phone-label {
+    font-size: 14px;
+    color: #666;
+    font-weight: 600;
+    text-align: center;
+    max-width: 390px;
+  }
+
+  /* Divider */
+  .info-panel {
+    max-width: 300px;
+    align-self: flex-start;
+    margin-top: 60px;
+  }
+  .info-panel h1 { font-size: 28px; font-weight: 800; color: #006E5A; line-height: 1.2; margin-bottom: 8px; }
+  .info-panel .tagline { font-size: 16px; color: #444; line-height: 1.5; margin-bottom: 20px; }
+  .feature-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .feature-list li {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 14px; color: #333; line-height: 1.4;
+  }
+  .f-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .badge-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 24px; }
+  .badge {
+    background: #E6F4F0; color: #006E5A;
+    border-radius: 20px; padding: 6px 12px;
+    font-size: 12px; font-weight: 700;
+  }
+</style>
+</head>
+<body>
+
+<!-- Info panel -->
+<div class="info-panel">
+  <h1>Oma<br>Terveys AI</h1>
+  <p class="tagline">Terveystalo's proactive health companion — bringing your scattered health data, recommendations, and check-ups together in one place.</p>
+  <ul class="feature-list">
+    <li><span class="f-icon">🔔</span> Surfaces forgotten doctor recommendations from Kanta records</li>
+    <li><span class="f-icon">📅</span> Personalised health calendar across life stages</li>
+    <li><span class="f-icon">⌚</span> Connects Apple Watch, Oura, Kanta, and grocery loyalty data</li>
+    <li><span class="f-icon">🤖</span> AI assistant that notices patterns and gently suggests options</li>
+    <li><span class="f-icon">🔒</span> Patient-controlled: you choose what data to share</li>
+  </ul>
+  <div class="badge-row">
+    <span class="badge">Terveystalo</span>
+    <span class="badge">Findata ✓</span>
+    <span class="badge">Available Sept 2026</span>
+  </div>
+</div>
+
+<!-- Phone 1: Home screen -->
+<div class="phone-wrap">
+  <div class="phone">
+    <div class="phone-notch"></div>
+    <div class="screen">
+      <!-- Status bar -->
+      <div class="status-bar">
+        <span>9:41</span>
+        <div class="status-icons">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="7" width="20" height="11" rx="2" ry="2" stroke="currentColor" stroke-width="1.5" fill="none"/><rect x="22" y="10" width="2" height="5" rx="1" fill="currentColor"/><rect x="3.5" y="8.5" width="13" height="8" rx="1" fill="currentColor"/></svg>
+        </div>
+      </div>
+
+      <!-- App header -->
+      <div class="app-header">
+        <div class="brand">
+          <div class="brand-logo">OT</div>
+          <div>
+            <div class="brand-name">Oma Terveys AI</div>
+            <div class="brand-sub">TERVEYSTALO</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scrollable content -->
+      <div class="scroll-content">
+
+        <!-- Greeting card -->
+        <div class="greeting-card">
+          <div class="greeting-label">Hei,</div>
+          <div class="greeting-name">Anni Korhonen 👋</div>
+          <div class="health-score-row">
+            <div class="score-box">
+              <div class="score-val">82</div>
+              <div class="score-lbl">Hyvinvointiindeksi</div>
+            </div>
+            <div class="score-box">
+              <div class="score-val">7 431</div>
+              <div class="score-lbl">Askelta eilen</div>
+            </div>
+            <div class="score-box">
+              <div class="score-val">43</div>
+              <div class="score-lbl">Ikä</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI prompt -->
+        <div class="ai-chat-trigger">
+          <div class="ai-avatar">✨</div>
+          <div class="ai-prompt">
+            <strong>Terveysassistenttisi</strong>
+            Minulla on 2 havaintoa terveystiedoistasi. Haluatko kuulla?
+          </div>
+        </div>
+
+        <!-- Alerts -->
+        <div class="section-header">
+          <div class="section-title">Toimenpiteet</div>
+          <div class="section-link">Kaikki →</div>
+        </div>
+
+        <!-- Urgent alert -->
+        <div class="alert-card">
+          <div class="alert-top">
+            <span class="alert-badge">Muistutus</span>
+            <span class="alert-age">Lisätty 2021</span>
+          </div>
+          <div class="alert-title">Rintarauhasen ultraääni suositeltiin vuonna 2021</div>
+          <div class="alert-body">Lääkäri Mäkinen kirjasi: "Suosittelen rintarauhasen ultraääni-tutkimusta kahden vuoden kuluttua." Tutkimus on vielä tekemättä.</div>
+          <button class="alert-action">Varaa aika →</button>
+        </div>
+
+        <!-- Info alert -->
+        <div class="alert-card info">
+          <div class="alert-top">
+            <span class="alert-badge info">Ikäsuositus</span>
+            <span class="alert-age">Sinulle, 43 v</span>
+          </div>
+          <div class="alert-title">Mammografiaseulonta – sinun vuotesi lähestyy</div>
+          <div class="alert-body">Kansallinen seulonta alkaa 45-vuotiaana. Samankaltaisessa tilanteessa olevista naisista 73 % on käynyt myös yksityisessä mammografiakuvannuksessa tässä iässä.</div>
+          <button class="alert-action secondary">Lisätietoja</button>
+        </div>
+
+        <!-- Calendar -->
+        <div class="section-header">
+          <div class="section-title">Terveyskalenteri</div>
+          <div class="section-link">Näytä kaikki →</div>
+        </div>
+        <div class="cal-strip">
+          <div class="cal-month urgent has-event">
+            <div class="cal-month-name">Kesäkuu 2026</div>
+            <div class="cal-event-title">Rintarauhasen ultraääni</div>
+            <div class="cal-event-sub">Odottaa varausta</div>
+          </div>
+          <div class="cal-month has-event">
+            <div class="cal-month-name">Elokuu 2026</div>
+            <div class="cal-event-title">Hammastarkastus</div>
+            <div class="cal-event-sub">Varattu ✓</div>
+          </div>
+          <div class="cal-month">
+            <div class="cal-month-name">Syyskuu 2026</div>
+            <div class="cal-empty">Ei tapahtumia</div>
+          </div>
+          <div class="cal-month has-event">
+            <div class="cal-month-name">Tammikuu 2027</div>
+            <div class="cal-event-title">Kolesteroli­tarkistus</div>
+            <div class="cal-event-sub">Suositeltu</div>
+          </div>
+        </div>
+
+        <!-- Data sources -->
+        <div class="section-header">
+          <div class="section-title">Tietolähteet</div>
+          <div class="section-link">Hallitse →</div>
+        </div>
+        <div class="data-grid">
+          <div class="data-source">
+            <div class="ds-icon">🏥</div>
+            <div class="ds-name">Kanta-arkisto</div>
+            <div class="ds-status connected"><span class="ds-dot"></span>Yhdistetty</div>
+          </div>
+          <div class="data-source">
+            <div class="ds-icon">⌚</div>
+            <div class="ds-name">Apple Watch</div>
+            <div class="ds-status connected"><span class="ds-dot"></span>Yhdistetty</div>
+          </div>
+          <div class="data-source">
+            <div class="ds-icon">🛒</div>
+            <div class="ds-name">S-etukortti</div>
+            <div class="ds-status connected"><span class="ds-dot"></span>Yhdistetty</div>
+          </div>
+          <div class="data-source">
+            <div class="ds-icon">💍</div>
+            <div class="ds-name">Oura-sormus</div>
+            <div class="ds-status disconnected"><span class="ds-dot off"></span>Ei yhdistetty</div>
+          </div>
+        </div>
+
+        <div style="height:16px"></div>
+
+      </div><!-- /scroll -->
+
+      <!-- Bottom nav -->
+      <div class="bottom-nav">
+        <div class="nav-item active">
+          <div class="nav-icon-wrap">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-dot"></span>
+          </div>
+          <span class="nav-label" style="color:#006E5A">Koti</span>
+        </div>
+        <div class="nav-item">
+          <span class="nav-icon">📅</span>
+          <span class="nav-label">Kalenteri</span>
+        </div>
+        <div class="nav-item">
+          <span class="nav-icon">✨</span>
+          <span class="nav-label">AI-avustaja</span>
+        </div>
+        <div class="nav-item">
+          <span class="nav-icon">📊</span>
+          <span class="nav-label">Tiedot</span>
+        </div>
+        <div class="nav-item">
+          <span class="nav-icon">👤</span>
+          <span class="nav-label">Profiili</span>
+        </div>
+      </div>
+
+    </div><!-- /screen -->
+  </div><!-- /phone -->
+  <div class="phone-label">Etusivu – terveysyhteenveto ja muistutukset</div>
+</div>
+
+<!-- Phone 2: AI Chat -->
+<div class="phone-wrap">
+  <div class="chat-screen">
+    <div class="phone-notch"></div>
+
+    <div class="chat-header">
+      <div class="chat-header-inner">
+        <div class="chat-avatar-lg">✨</div>
+        <div>
+          <div class="chat-title">Terveysassistentti</div>
+          <div class="chat-online"><span class="online-dot"></span> Aktiivinen</div>
+          <div class="chat-subtitle">Oma Terveys AI · Terveystalo</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-messages">
+
+      <div class="msg ai">
+        <div class="msg-bubble">
+          Hei Anni! 👋 Olen käynyt läpi Kanta-tietojasi ja havainnut muutaman asian, joihin kannattaa kiinnittää huomiota.
+        </div>
+        <div class="msg-time">9:38</div>
+      </div>
+
+      <div class="msg ai">
+        <div class="msg-bubble">
+          <strong>Huomio 1:</strong> Lääkäri suositteli sinulle rintarauhasen ultraääni-tutkimusta vuonna 2021. Tutkimusta ei näytä tehdyn. Haluatko, että varaan ajan?
+        </div>
+        <div class="msg-time">9:38</div>
+        <div class="suggestion-chips">
+          <span class="chip">Kyllä, varaa aika</span>
+          <span class="chip">Kerro lisää</span>
+          <span class="chip">Ei nyt</span>
+        </div>
+      </div>
+
+      <div class="msg user">
+        <div class="msg-bubble">Kyllä, haluaisin varata ajan. Milloin saisin ajan nopeimmin?</div>
+        <div class="msg-time">9:39</div>
+      </div>
+
+      <div class="msg ai">
+        <div class="msg-bubble">
+          Lähimmässä Terveystalo-klinikassasi (Kamppi, Helsinki) on vapaa aika:<br><br>
+          📅 <strong>Tiistai 9.6.2026 klo 10:30</strong><br>
+          Rintarauhasen ultraääni · Radiologi Hakala<br><br>
+          Varatako tämän ajan?
+        </div>
+        <div class="msg-time">9:39</div>
+        <div class="suggestion-chips">
+          <span class="chip">✓ Varaa tämä aika</span>
+          <span class="chip">Näytä muita aikoja</span>
+        </div>
+      </div>
+
+      <div class="msg user">
+        <div class="msg-bubble">Varaa tämä aika, kiitos.</div>
+        <div class="msg-time">9:40</div>
+      </div>
+
+      <div class="msg ai">
+        <div class="msg-bubble">
+          ✅ <strong>Aika varattu!</strong><br><br>
+          Rintarauhasen ultraääni<br>
+          Ti 9.6.2026 klo 10:30<br>
+          Terveystalo Kamppi, 2. krs<br><br>
+          Lähetän kalenterikutsun ja muistutuksen päivää ennen. Sinulle ei tarvita erityistä valmistautumista.
+        </div>
+        <div class="msg-time">9:40</div>
+      </div>
+
+      <div class="msg ai">
+        <div class="msg-bubble">
+          <strong>Huomio 2:</strong> Ostohistoriasi perusteella punaisen lihan kulutuksesi on kasvanut viimeisen 3 kuukauden aikana. Sydänterveyden kannalta 43-vuotiailla naisilla tämä voi olla merkityksellistä. Haluatko tietää lisää?
+        </div>
+        <div class="msg-time">9:41</div>
+        <div class="suggestion-chips">
+          <span class="chip">Kerro lisää</span>
+          <span class="chip">Ei kiitos</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="chat-input-area">
+      <input class="chat-input" type="text" placeholder="Kysy terveydestäsi…" />
+      <button class="chat-send">↑</button>
+    </div>
+
+  </div>
+  <div class="phone-label">AI-avustaja – keskustelu ja ajanvaraus</div>
+</div>
+
+</body>
+</html>
